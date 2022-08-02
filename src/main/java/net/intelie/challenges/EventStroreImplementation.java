@@ -7,12 +7,11 @@ import java.util.Collection;
 
 //main class implementation
 public class EventStoreImplementation implements EventIterator {
-    // xxx defifinion
     private Collection<Event> events;
     private Boolean nextMethodCalledOnce = false;
     private Boolean nextLastResult = null;
     private int currentPosition = -1;
-    private final String illegalStateMessage = "method next has never been called or its false"
+    private final String illegalStateMessage = "method next has never been called or its false";
 
     //event sorting class implementation
     public EventStoreImplementation(Collection<Event> events) {this.events = events;}
@@ -28,18 +27,17 @@ public class EventStoreImplementation implements EventIterator {
         }
       
         nextLastResult = true;
-        currentEventPosition++;
+        currentPosition++;
         return true;
     }
 
-    
     @Override
     public Event current() {
         if (!nextMethodCalledOnce || (nextLastResult == false)) {
             throw new IllegalStateException(illegalStateMessage);
         }
 
-        return (Event) events.toArray()[currentEventPosition];
+        return (Event) events.toArray()[currentPosition];
     }
 
     @Override
@@ -51,16 +49,15 @@ public class EventStoreImplementation implements EventIterator {
         Event currentEvent = current();
         events.remove(currentEvent);
         (new EventDAO()).remove(currentEvent);
-        currentEventPosition--;
+        currentPosition--;
     }
 
     @Override
     public void close() {
         nextMethodCalledOnce = false;
-        nextLastResult               = null;
-        currentEventPosition                   = -1;
-        events                                 = null;
+        nextLastResult = null;
+        currentPosition = -1;
+        events = null;
     }
 }
 
-}
